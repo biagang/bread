@@ -1,8 +1,8 @@
-use clap::{Parser, ValueEnum};
+use crate::binary;
 use crate::byte_writer::ByteWriter;
 use crate::error::*;
-use crate::binary;
 use crate::hexadecimal;
+use clap::{Parser, ValueEnum};
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -36,20 +36,20 @@ pub struct Config {
 impl Config {
     pub fn new() -> Option<Self> {
         let args = Args::parse();
-
-        let reader = match args.input {
-            Mode::Raw => unimplemented!(),
-            Mode::Bin => Box::new(binary::Reader::new(std::io::stdin())),
-            Mode::Hex => unimplemented!(),
-            Mode::Ascii => unimplemented!(),
-        };
-        let writer = match args.output {
-            Mode::Raw => unimplemented!(),
-            Mode::Bin => unimplemented!(),
-            Mode::Hex => Box::new(hexadecimal::Writer::new(std::io::stdout())),
-            Mode::Ascii => unimplemented!(),
-        };
-        Some(Config{reader, writer})
+        Some(Config {
+            reader: match args.input {
+                Mode::Raw => unimplemented!(),
+                Mode::Bin => Box::new(binary::Reader::new(std::io::stdin())),
+                Mode::Hex => Box::new(hexadecimal::Reader::new(std::io::stdin())),
+                Mode::Ascii => unimplemented!(),
+            },
+            writer: match args.output {
+                Mode::Raw => unimplemented!(),
+                Mode::Bin => Box::new(binary::Writer::new(std::io::stdout())),
+                Mode::Hex => Box::new(hexadecimal::Writer::new(std::io::stdout())),
+                Mode::Ascii => unimplemented!(),
+            },
+        })
     }
 
     pub fn to_io(

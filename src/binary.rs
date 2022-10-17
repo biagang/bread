@@ -1,5 +1,7 @@
-use std::io::{Bytes, Read};
-use crate::error::InError;
+use crate::byte_writer::ByteWriter;
+use crate::error::{InError, OutError};
+use crate::util;
+use std::io::{Bytes, Read, Write};
 
 pub struct Reader<R: Read> {
     in_bytes: Bytes<R>,
@@ -56,5 +58,54 @@ impl<R: Read> Iterator for Reader<R> {
             i = i - 1;
         }
         Some(Ok(value))
+    }
+}
+
+pub struct Writer<W: Write> {
+    out_bytes: W,
+}
+
+impl<W: Write> Writer<W> {
+    pub fn new(out_bytes: W) -> Self {
+        Writer { out_bytes }
+    }
+}
+
+impl<W: Write> ByteWriter for Writer<W> {
+    fn write(&mut self, byte: u8) -> Result<(), OutError> {
+        let mut bit_string = ['0' as u8; 8];
+        for i in (0..8).rev() {
+            if (byte & (1 << i)) != 0 {
+                bit_string[7 - i] = '1' as u8;
+            }
+        }
+        util::write(&mut self.out_bytes, bit_string.as_slice(), 8)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::util::literals::*;
+
+    #[test]
+    fn read() {
+        let input = [
+            _0, _1, _0, _0, _1, _0, _1, _0, _0, _1, _0, _1, _1, _1, _1, _1,
+        ];
+        let mut reader = Reader::new(input.as_slice());
+        assert_eq!(0b01001010u8, reader.next().unwrap().unwrap());
+        assert_eq!(0b01011111u8, reader.next().unwrap().unwrap());
+        assert!(reader.next().is_none());
+    }
+
+    #[test]
+    fn write() {
+        let input = 0b10110100u8;
+        let expected = [_1, _0, _1, _1, _0, _1, _0, _0];
+        let mut output = [0u8; 8];
+        let mut writer = Writer::new(output.as_mut_slice());
+        writer.write(input).unwrap();
+        assert_eq!(expected, output);
     }
 }
