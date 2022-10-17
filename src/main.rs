@@ -10,8 +10,9 @@ use byte_writer::ByteWriter;
 mod binary;
 mod hexadecimal;
 
+mod util;
 
-fn convert<>(
+fn convert(
     istream: Box<dyn Iterator<Item = Result<u8, InError>> + '_>,
     mut ostream: Box<dyn ByteWriter + '_>,
 ) -> Result<(), Error> {
@@ -34,40 +35,50 @@ fn main() {
     let config = Config::new().unwrap();
     let (input, output) = config.to_io();
     match convert(input, output) {
-        Ok(()) => {},
-        Err(e) => {eprintln!("{e:?}");},
+        Ok(()) => {}
+        Err(e) => {
+            eprintln!("{e:?}");
+        }
     }
 }
 
-const _0: u8 = '0' as u8;
-const _1: u8 = '1' as u8;
-const _2: u8 = '2' as u8;
-const _3: u8 = '3' as u8;
-const _4: u8 = '4' as u8;
-const _5: u8 = '5' as u8;
-const _6: u8 = '6' as u8;
-const _7: u8 = '7' as u8;
-const _8: u8 = '8' as u8;
-const _9: u8 = '9' as u8;
-const _A: u8 = 'a' as u8;
-const _B: u8 = 'b' as u8;
-const _C: u8 = 'c' as u8;
-const _D: u8 = 'd' as u8;
-const _E: u8 = 'e' as u8;
-const _F: u8 = 'f' as u8;
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::util::literals::*;
 
+    #[test]
+    fn bin2bin() {
+        let input = [
+            _0, _1, _0, _0, _1, _0, _1, _0, _0, _1, _0, _1, _1, _1, _1, _1,
+        ];
+        let mut output = [0u8; 16];
+        let bin_reader = Box::new(binary::Reader::new(input.as_slice()));
+        let bin_writer = Box::new(binary::Writer::new(output.as_mut_slice()));
+        convert(bin_reader, bin_writer).unwrap();
+        assert_eq!(input, output);
+    }
 
-#[test]
-fn bin2hex() {
-    let input = [
-        _0, _1, _0, _0, _1, _0, _1, _0, _0, _1, _0, _1, _1, _1, _1, _1,
-    ];
-    let expected = [_4, _A, _5, _F];
-    let mut output = [0u8; 4];
+    #[test]
+    fn hex2hex() {
+        let input = [_A, _7, _B.to_ascii_uppercase(), _3];
+        let mut output = [0u8; 4];
+        let hex_reader = Box::new(hexadecimal::Reader::new(input.as_slice()));
+        let hex_writer = Box::new(hexadecimal::Writer::new(output.as_mut_slice()));
+        convert(hex_reader, hex_writer).unwrap();
+        assert_eq!(input.to_ascii_lowercase(), output);
+    }
 
-    let bin_reader = Box::new(binary::Reader::new(input.as_slice()));
-    let hex_writer = Box::new(hexadecimal::Writer::new(output.as_mut_slice()));
-
-     convert(bin_reader, hex_writer).unwrap();
-     assert_eq!(expected, output);
+    #[test]
+    fn bin2hex() {
+        let input = [
+            _0, _1, _0, _0, _1, _0, _1, _0, _0, _1, _0, _1, _1, _1, _1, _1,
+        ];
+        let expected = [_4, _A, _5, _F];
+        let mut output = [0u8; 4];
+        let bin_reader = Box::new(binary::Reader::new(input.as_slice()));
+        let hex_writer = Box::new(hexadecimal::Writer::new(output.as_mut_slice()));
+        convert(bin_reader, hex_writer).unwrap();
+        assert_eq!(expected, output);
+    }
 }
