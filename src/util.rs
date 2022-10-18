@@ -19,6 +19,8 @@ pub mod literals {
     pub const _D: u8 = 'd' as u8;
     pub const _E: u8 = 'e' as u8;
     pub const _F: u8 = 'f' as u8;
+    pub const _EXCL: u8 = '!' as u8;
+    pub const _STAR: u8 = '*' as u8;
 }
 
 pub fn write<W: Write>(

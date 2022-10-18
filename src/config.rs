@@ -1,7 +1,8 @@
 use crate::binary;
+use crate::hexadecimal;
+use crate::ascii;
 use crate::byte_writer::ByteWriter;
 use crate::error::*;
-use crate::hexadecimal;
 use clap::{Parser, ValueEnum};
 
 #[derive(Parser, Debug)]
@@ -41,13 +42,13 @@ impl Config {
                 Mode::Raw => unimplemented!(),
                 Mode::Bin => Box::new(binary::Reader::new(std::io::stdin())),
                 Mode::Hex => Box::new(hexadecimal::Reader::new(std::io::stdin())),
-                Mode::Ascii => unimplemented!(),
+                Mode::Ascii => Box::new(ascii::Reader::new(std::io::stdin())),
             },
             writer: match args.output {
                 Mode::Raw => unimplemented!(),
                 Mode::Bin => Box::new(binary::Writer::new(std::io::stdout())),
                 Mode::Hex => Box::new(hexadecimal::Writer::new(std::io::stdout())),
-                Mode::Ascii => unimplemented!(),
+                Mode::Ascii => Box::new(ascii::Writer::new(std::io::stdout())),
             },
         })
     }

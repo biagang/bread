@@ -96,7 +96,6 @@ impl<W: Write> ByteWriter for Writer<W> {
 
 #[cfg(test)]
 mod tests {
-
     use super::*;
     use crate::util::literals::*;
 
