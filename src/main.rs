@@ -9,6 +9,7 @@ use byte_writer::ByteWriter;
 
 mod binary;
 mod hexadecimal;
+mod ascii;
 
 mod util;
 
@@ -53,9 +54,9 @@ mod tests {
             _0, _1, _0, _0, _1, _0, _1, _0, _0, _1, _0, _1, _1, _1, _1, _1,
         ];
         let mut output = [0u8; 16];
-        let bin_reader = Box::new(binary::Reader::new(input.as_slice()));
-        let bin_writer = Box::new(binary::Writer::new(output.as_mut_slice()));
-        convert(bin_reader, bin_writer).unwrap();
+        let reader = Box::new(binary::Reader::new(input.as_slice()));
+        let writer = Box::new(binary::Writer::new(output.as_mut_slice()));
+        convert(reader, writer).unwrap();
         assert_eq!(input, output);
     }
 
@@ -63,10 +64,20 @@ mod tests {
     fn hex2hex() {
         let input = [_A, _7, _B.to_ascii_uppercase(), _3];
         let mut output = [0u8; 4];
-        let hex_reader = Box::new(hexadecimal::Reader::new(input.as_slice()));
-        let hex_writer = Box::new(hexadecimal::Writer::new(output.as_mut_slice()));
-        convert(hex_reader, hex_writer).unwrap();
+        let reader = Box::new(hexadecimal::Reader::new(input.as_slice()));
+        let writer = Box::new(hexadecimal::Writer::new(output.as_mut_slice()));
+        convert(reader, writer).unwrap();
         assert_eq!(input.to_ascii_lowercase(), output);
+    }
+
+    #[test]
+    fn ascii2ascii() {
+        let input = [ _A, _B, _STAR, _EXCL ];
+        let mut output = [0u8; 4];
+        let reader = Box::new(ascii::Reader::new(input.as_slice()));
+        let writer = Box::new(ascii::Writer::new(output.as_mut_slice()));
+        convert(reader, writer).unwrap();
+        assert_eq!(input, output);
     }
 
     #[test]
@@ -76,9 +87,33 @@ mod tests {
         ];
         let expected = [_4, _A, _5, _F];
         let mut output = [0u8; 4];
-        let bin_reader = Box::new(binary::Reader::new(input.as_slice()));
-        let hex_writer = Box::new(hexadecimal::Writer::new(output.as_mut_slice()));
-        convert(bin_reader, hex_writer).unwrap();
+        let reader = Box::new(binary::Reader::new(input.as_slice()));
+        let writer = Box::new(hexadecimal::Writer::new(output.as_mut_slice()));
+        convert(reader, writer).unwrap();
+        assert_eq!(expected, output);
+    }
+
+    #[test]
+    fn bin2ascii() {
+        let input = [
+            _0, _0, _1, _0,  _1, _0, _1, _0,  _0, _0, _1, _0,  _0, _0, _0, _1,
+        ];
+        let expected = [_STAR, _EXCL];
+        let mut output = [0u8; 2];
+        let reader = Box::new(binary::Reader::new(input.as_slice()));
+        let writer = Box::new(ascii::Writer::new(output.as_mut_slice()));
+        convert(reader, writer).unwrap();
+        assert_eq!(expected, output);
+    }
+
+    #[test]
+    fn ascii2hex() {
+        let input = [ _A, _B, _STAR, _EXCL ];
+        let expected = [_6, _1, _6, _2, _2, _A, _2, _1];
+        let mut output = [0u8; 8];
+        let reader = Box::new(ascii::Reader::new(input.as_slice()));
+        let writer = Box::new(hexadecimal::Writer::new(output.as_mut_slice()));
+        convert(reader, writer).unwrap();
         assert_eq!(expected, output);
     }
 }
