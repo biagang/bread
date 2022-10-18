@@ -1,3 +1,4 @@
+use crate::raw;
 use crate::binary;
 use crate::hexadecimal;
 use crate::ascii;
@@ -39,13 +40,13 @@ impl Config {
         let args = Args::parse();
         Some(Config {
             reader: match args.input {
-                Mode::Raw => unimplemented!(),
+                Mode::Raw => Box::new(raw::Reader::new(std::io::stdin())),
                 Mode::Bin => Box::new(binary::Reader::new(std::io::stdin())),
                 Mode::Hex => Box::new(hexadecimal::Reader::new(std::io::stdin())),
                 Mode::Ascii => Box::new(ascii::Reader::new(std::io::stdin())),
             },
             writer: match args.output {
-                Mode::Raw => unimplemented!(),
+                Mode::Raw => Box::new(raw::Writer::new(std::io::stdout())),
                 Mode::Bin => Box::new(binary::Writer::new(std::io::stdout())),
                 Mode::Hex => Box::new(hexadecimal::Writer::new(std::io::stdout())),
                 Mode::Ascii => Box::new(ascii::Writer::new(std::io::stdout())),
