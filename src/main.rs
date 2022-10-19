@@ -36,11 +36,8 @@ fn convert(
 fn main() {
     let config = Config::new().unwrap();
     let (input, output) = config.to_io();
-    match convert(input, output) {
-        Ok(()) => {}
-        Err(e) => {
-            eprintln!("{e:?}");
-        }
+    if let Err(e) = convert(input, output) {
+        eprintln!("{e:?}");
     }
 }
 
