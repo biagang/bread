@@ -34,8 +34,7 @@ fn convert(
 }
 
 fn main() {
-    let config = Config::new().unwrap();
-    let (input, output) = config.to_io();
+    let (input, output) = Config::new().unwrap().to_io();
     if let Err(e) = convert(input, output) {
         eprintln!("{e:?}");
     }
