@@ -1,24 +1,27 @@
-use crate::raw;
-use crate::binary;
-use crate::hexadecimal;
+use std::fmt::Display;
+
 use crate::ascii;
+use crate::base;
+use crate::binary;
 use crate::byte_writer::ByteWriter;
 use crate::error::*;
-use clap::{Parser, ValueEnum};
+use crate::hexadecimal;
+use crate::raw;
+use clap::Parser;
 
-#[derive(Parser, Debug)]
+#[derive(Debug, Parser)]
 #[command(author, version, about, long_about = None)]
 struct Args {
-    #[arg(short, long, value_enum, default_value_t = Mode::Ascii)]
+    #[arg(short, long, value_parser = Mode::parse, default_value_t = Mode::Ascii)]
     /// input format
     input: Mode,
 
-    #[arg(short, long, value_enum, default_value_t = Mode::Ascii)]
+    #[arg(short, long, value_parser = Mode::parse, default_value_t = Mode::Ascii)]
     /// output format
     output: Mode,
 }
 
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Debug, ValueEnum)]
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
 enum Mode {
     /// raw byte
     Raw,
@@ -28,6 +31,46 @@ enum Mode {
     Hex,
     /// ASCII characters (g.e. '!')
     Ascii,
+    /// numeric base (2 to 16)
+    Base(u8),
+}
+
+impl Mode {
+    fn parse(arg: &str) -> Result<Self, String> {
+        if let Ok(base) = arg.parse::<u8>() {
+            if base > 1 && base < 17 {
+                Ok(Mode::Base(base))
+            } else {
+                Err(format!("base must be in [2,16]"))
+            }
+        } else {
+            match arg {
+                "raw" | "r" => Ok(Mode::Raw),
+                "bin" | "b" => Ok(Mode::Bin),
+                "hex" | "h" => Ok(Mode::Hex),
+                "ascii" | "a" => Ok(Mode::Ascii),
+                _ => Err(format!(
+                    "allowed modes: raw, bin, hex, ascii or X where X is a numeric base in [2,16]"
+                )),
+            }
+        }
+    }
+}
+
+impl Display for Mode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Mode::Raw => "raw".to_string(),
+                Mode::Bin => "bin".to_string(),
+                Mode::Hex => "hex".to_string(),
+                Mode::Ascii => "ascii".to_string(),
+                Mode::Base(b) => format!("base {b}"),
+            }
+        )
+    }
 }
 
 pub struct Config {
@@ -44,12 +87,14 @@ impl Config {
                 Mode::Bin => Box::new(binary::Reader::new(std::io::stdin())),
                 Mode::Hex => Box::new(hexadecimal::Reader::new(std::io::stdin())),
                 Mode::Ascii => Box::new(ascii::Reader::new(std::io::stdin())),
+                Mode::Base(b) => Box::new(base::Reader::new(std::io::stdin(), b)),
             },
             writer: match args.output {
                 Mode::Raw => Box::new(raw::Writer::new(std::io::stdout())),
                 Mode::Bin => Box::new(binary::Writer::new(std::io::stdout())),
                 Mode::Hex => Box::new(hexadecimal::Writer::new(std::io::stdout())),
                 Mode::Ascii => Box::new(ascii::Writer::new(std::io::stdout())),
+                Mode::Base(_) => unimplemented!(),
             },
         })
     }
