@@ -12,11 +12,11 @@ use clap::Parser;
 #[derive(Debug, Parser)]
 #[command(author, version, about)]
 struct Args {
-    #[arg(short, long, value_parser = Mode::parse, default_value_t = Mode::Ascii)]
+    #[arg(short, long, value_parser = Mode::parse, default_value_t = Mode::Ascii, long_help = Mode::LONG_HELP)]
     /// input format
     input: Mode,
 
-    #[arg(short, long, value_parser = Mode::parse, default_value_t = Mode::Ascii)]
+    #[arg(short, long, value_parser = Mode::parse, default_value_t = Mode::Ascii, long_help = Mode::LONG_HELP)]
     /// output format
     output: Mode,
 }
@@ -36,6 +36,12 @@ enum Mode {
 }
 
 impl Mode {
+    const LONG_HELP: &'static str = r#"Possible values:
+- raw:   raw byte
+- bin:   binary representation (g.e. '00001101')
+- hex:   hexadecimal representation (g.e. 'a4')
+- ascii: ASCII characters (g.e. '!')
+- N:     base N representation (note: make sure to provide required number of digits per each byte, pad with heading 0s) "#;
     fn parse(arg: &str) -> Result<Self, String> {
         if let Ok(base) = arg.parse::<u8>() {
             if base > 1 && base < 17 {
@@ -50,7 +56,7 @@ impl Mode {
                 "hex" | "h" => Ok(Mode::Hex),
                 "ascii" | "a" => Ok(Mode::Ascii),
                 _ => Err(format!(
-                    "allowed modes: raw, bin, hex, ascii or X where X is a numeric base in [2,16]"
+                    "allowed modes: raw, bin, hex, ascii or N where N is a numeric base in [2,16]"
                 )),
             }
         }
@@ -81,6 +87,7 @@ pub struct Config {
 impl Config {
     pub fn new() -> Option<Self> {
         let args = Args::parse();
+
         Some(Config {
             reader: match args.input {
                 Mode::Raw => Box::new(raw::Reader::new(std::io::stdin())),
