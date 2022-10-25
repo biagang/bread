@@ -166,4 +166,15 @@ mod tests {
         convert(reader, writer).unwrap();
         assert_eq!(expected, output);
     }
+
+    #[test]
+    fn b10_to_b16() {
+        let input = [_0, _1, _6, _2, _5, _4];
+        let mut output = [0u8; 4];
+        let expected = [_1, _0, _F, _E];
+        let reader = Box::new(base::Reader::new(input.as_slice(), 10));
+        let writer = Box::new(base::Writer::new(output.as_mut_slice(), 16));
+        convert(reader, writer).unwrap();
+        assert_eq!(expected, output);
+    }
 }

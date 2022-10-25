@@ -1,6 +1,7 @@
 use crate::byte_writer::ByteWriter;
 use crate::error::{InError, OutError};
 use crate::util;
+use crate::util::literals::*;
 use std::io::{Bytes, Read, Write};
 
 pub struct Reader<R: Read> {
@@ -73,10 +74,10 @@ impl<W: Write> Writer<W> {
 
 impl<W: Write> ByteWriter for Writer<W> {
     fn write(&mut self, byte: u8) -> Result<(), OutError> {
-        let mut bit_string = ['0' as u8; 8];
+        let mut bit_string = [_0; 8];
         for i in (0..8).rev() {
             if (byte & (1 << i)) != 0 {
-                bit_string[7 - i] = '1' as u8;
+                bit_string[7 - i] = _1;
             }
         }
         util::write(&mut self.out_bytes, bit_string.as_slice(), 8)
@@ -86,7 +87,6 @@ impl<W: Write> ByteWriter for Writer<W> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::util::literals::*;
 
     #[test]
     fn read() {

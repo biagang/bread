@@ -10,7 +10,7 @@ use crate::raw;
 use clap::Parser;
 
 #[derive(Debug, Parser)]
-#[command(author, version, about, long_about = None)]
+#[command(author, version, about)]
 struct Args {
     #[arg(short, long, value_parser = Mode::parse, default_value_t = Mode::Ascii)]
     /// input format
@@ -94,7 +94,7 @@ impl Config {
                 Mode::Bin => Box::new(binary::Writer::new(std::io::stdout())),
                 Mode::Hex => Box::new(hexadecimal::Writer::new(std::io::stdout())),
                 Mode::Ascii => Box::new(ascii::Writer::new(std::io::stdout())),
-                Mode::Base(_) => unimplemented!(),
+                Mode::Base(b) =>Box::new(base::Writer::new(std::io::stdout(), b)), 
             },
         })
     }
