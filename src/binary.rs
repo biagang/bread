@@ -1,6 +1,7 @@
 use crate::byte_writer::ByteWriter;
 use crate::error::{InError, OutError};
 use crate::util;
+use crate::util::literals::*;
 use std::io::{Bytes, Read, Write};
 
 pub struct Reader<R: Read> {
@@ -73,10 +74,10 @@ impl<W: Write> Writer<W> {
 
 impl<W: Write> ByteWriter for Writer<W> {
     fn write(&mut self, byte: u8) -> Result<(), OutError> {
-        let mut bit_string = ['0' as u8; 8];
+        let mut bit_string = [_0; 8];
         for i in (0..8).rev() {
             if (byte & (1 << i)) != 0 {
-                bit_string[7 - i] = '1' as u8;
+                bit_string[7 - i] = _1;
             }
         }
         util::write(&mut self.out_bytes, bit_string.as_slice(), 8)
@@ -86,7 +87,6 @@ impl<W: Write> ByteWriter for Writer<W> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::util::literals::*;
 
     #[test]
     fn read() {
@@ -107,5 +107,33 @@ mod tests {
         let mut writer = Writer::new(output.as_mut_slice());
         writer.write(input).unwrap();
         assert_eq!(expected, output);
+    }
+}
+
+#[cfg(test)]
+mod benchs {
+    extern crate test;
+    use super::*;
+
+    #[bench]
+    fn read(b: &mut test::Bencher) {
+        const N: usize = 1024 * 1024;
+        static INPUT: [u8; N] = [_1; N];
+        b.iter(|| {
+            let reader = Reader::new(INPUT.as_slice());
+            let _ = reader.collect::<Vec<Result<u8, InError>>>();
+        });
+    }
+
+    #[bench]
+    fn write(b: &mut test::Bencher) {
+        const N: usize = 1024 * 1024;
+        static mut OUTPUT: [u8; N] = [_0; N];
+        b.iter(|| unsafe {
+            let mut writer = Writer::new(OUTPUT.as_mut_slice());
+            for _ in 0..N / 8 {
+                writer.write(255u8).unwrap();
+            }
+        });
     }
 }

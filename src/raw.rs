@@ -58,7 +58,7 @@ mod tests {
     #[test]
     fn write() {
         let input = 127u8;
-        let mut output = [0u8;1];
+        let mut output = [0u8; 1];
         let mut writer = Writer::new(output.as_mut_slice());
         writer.write(input).unwrap();
         assert_eq!(input, output[0]);

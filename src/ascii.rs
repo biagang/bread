@@ -25,7 +25,7 @@ impl<R: Read> Iterator for Reader<R> {
                 } else {
                     Some(Err(InError::InvalidByte(c as char))) // todo: maybe better as u8?
                 }
-            },
+            }
             Err(e) => Some(Err(InError::StdIO(e))),
         }
     }
@@ -44,7 +44,7 @@ impl<W: Write> Writer<W> {
 impl<W: Write> ByteWriter for Writer<W> {
     fn write(&mut self, byte: u8) -> Result<(), OutError> {
         if byte.is_ascii() {
-        util::write(&mut self.out_bytes, &[byte], 1)
+            util::write(&mut self.out_bytes, &[byte], 1)
         } else {
             Err(OutError::InvalidByte(byte))
         }
@@ -69,7 +69,7 @@ mod tests {
     #[test]
     fn write() {
         let input = _STAR;
-        let mut output = [0u8,1];
+        let mut output = [0u8, 1];
         let mut writer = Writer::new(output.as_mut_slice());
         writer.write(input).unwrap();
         assert_eq!(input, output[0]);
