@@ -94,14 +94,22 @@ impl Config {
                 Mode::Bin => Box::new(binary::Reader::new(std::io::stdin())),
                 Mode::Hex => Box::new(hexadecimal::Reader::new(std::io::stdin())),
                 Mode::Ascii => Box::new(ascii::Reader::new(std::io::stdin())),
-                Mode::Base(b) => Box::new(base::Reader::new(std::io::stdin(), b)),
+                Mode::Base(b) => match b {
+                    2 => Box::new(binary::Reader::new(std::io::stdin())),
+                    16 => Box::new(hexadecimal::Reader::new(std::io::stdin())),
+                    _ => Box::new(base::Reader::new(std::io::stdin(), b)),
+                },
             },
             writer: match args.output {
                 Mode::Raw => Box::new(raw::Writer::new(std::io::stdout())),
                 Mode::Bin => Box::new(binary::Writer::new(std::io::stdout())),
                 Mode::Hex => Box::new(hexadecimal::Writer::new(std::io::stdout())),
                 Mode::Ascii => Box::new(ascii::Writer::new(std::io::stdout())),
-                Mode::Base(b) => Box::new(base::Writer::new(std::io::stdout(), b)),
+                Mode::Base(b) => match b {
+                    2 => Box::new(binary::Writer::new(std::io::stdout())),
+                    16 =>Box::new(hexadecimal::Writer::new(std::io::stdout())),
+                    _ => Box::new(base::Writer::new(std::io::stdout(), b)),
+                },
             },
         })
     }
