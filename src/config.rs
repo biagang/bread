@@ -101,7 +101,7 @@ impl Config {
                 Mode::Bin => Box::new(binary::Writer::new(std::io::stdout())),
                 Mode::Hex => Box::new(hexadecimal::Writer::new(std::io::stdout())),
                 Mode::Ascii => Box::new(ascii::Writer::new(std::io::stdout())),
-                Mode::Base(b) =>Box::new(base::Writer::new(std::io::stdout(), b)), 
+                Mode::Base(b) => Box::new(base::Writer::new(std::io::stdout(), b)),
             },
         })
     }
