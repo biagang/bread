@@ -1,3 +1,5 @@
+#![feature(test)]
+
 mod error;
 use error::*;
 

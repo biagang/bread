@@ -32,8 +32,8 @@ impl Base {
             None
         }
     }
-    fn to_char(&self, d:u8) -> Option<u8> {
-        if d < self.base  {
+    fn to_char(&self, d: u8) -> Option<u8> {
+        if d < self.base {
             if d < 10 {
                 Some(_0 + d)
             } else {
@@ -57,7 +57,6 @@ impl<R: Read> Reader<R> {
             base: Base::new(base),
         }
     }
-
 
     fn next_non_whitespace(&mut self) -> Option<<Bytes<R> as Iterator>::Item> {
         loop {
@@ -124,7 +123,10 @@ pub struct Writer<W: Write> {
 
 impl<W: Write> Writer<W> {
     pub fn new(out_bytes: W, base: u8) -> Self {
-        Writer { out_bytes, base: Base::new(base) }
+        Writer {
+            out_bytes,
+            base: Base::new(base),
+        }
     }
 }
 
@@ -143,7 +145,11 @@ impl<W: Write> ByteWriter for Writer<W> {
                 break;
             }
         }
-        util::write(&mut self.out_bytes, string.as_slice(), self.base.digits_per_byte as usize)
+        util::write(
+            &mut self.out_bytes,
+            string.as_slice(),
+            self.base.digits_per_byte as usize,
+        )
     }
 }
 
@@ -151,9 +157,9 @@ impl<W: Write> ByteWriter for Writer<W> {
 mod tests {
     use super::*;
 
-        const DIGITS: [u8; 16] = [
-            _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _A, _B, _C, _D, _E, _F,
-        ];
+    const DIGITS: [u8; 16] = [
+        _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _A, _B, _C, _D, _E, _F,
+    ];
 
     fn required_digits(base: u8) -> u8 {
         match base {
@@ -169,10 +175,7 @@ mod tests {
     #[test]
     fn base_digits_per_byte() {
         for base in 2..17 {
-            assert_eq!(
-                Base::new(base).digits_per_byte,
-                required_digits(base)
-            );
+            assert_eq!(Base::new(base).digits_per_byte, required_digits(base));
         }
     }
 
@@ -233,10 +236,60 @@ mod tests {
     #[test]
     fn b8_write0() {
         let input = 0;
-        let expected = [_0, _0, _0 ];
+        let expected = [_0, _0, _0];
         let mut output = [0u8; 3];
         let mut writer = Writer::new(output.as_mut_slice(), 8);
         writer.write(input).unwrap();
         assert_eq!(expected, output);
+    }
+}
+
+#[cfg(test)]
+mod benchs {
+    extern crate test;
+    use super::*;
+
+    #[bench]
+    fn b2_read(b: &mut test::Bencher) {
+        const N: usize = 1024 * 1024;
+        static INPUT: [u8; N] = [_1; N];
+        b.iter(|| {
+            let reader = Reader::new(INPUT.as_slice(), 2);
+            let _ = reader.collect::<Vec<Result<u8, InError>>>();
+        });
+    }
+
+    #[bench]
+    fn b2_write(b: &mut test::Bencher) {
+        const N: usize = 1024 * 1024;
+        static mut OUTPUT: [u8; N] = [_0; N];
+        b.iter(|| unsafe {
+            let mut writer = Writer::new(OUTPUT.as_mut_slice(), 2);
+            for _ in 0..N / 8 {
+                writer.write(255u8).unwrap();
+            }
+        });
+    }
+
+    #[bench]
+    fn b16_read(b: &mut test::Bencher) {
+        const N: usize = 1024 * 1024;
+        static INPUT: [u8; N] = [_F; N];
+        b.iter(|| {
+            let reader = Reader::new(INPUT.as_slice(), 16);
+            let _ = reader.collect::<Vec<Result<u8, InError>>>();
+        });
+    }
+
+    #[bench]
+    fn b16_write(b: &mut test::Bencher) {
+        const N: usize = 1024 * 1024;
+        static mut OUTPUT: [u8; N] = [_0; N];
+        b.iter(|| unsafe {
+            let mut writer = Writer::new(OUTPUT.as_mut_slice(), 16);
+            for _ in 0..N / 2 {
+                writer.write(255u8).unwrap();
+            }
+        });
     }
 }

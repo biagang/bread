@@ -118,3 +118,32 @@ mod tests {
         assert_eq!(expected, output);
     }
 }
+
+#[cfg(test)]
+mod benchs {
+    extern crate test;
+    use super::*;
+    use crate::util::literals::*;
+
+    #[bench]
+    fn read(b: &mut test::Bencher) {
+        const N: usize = 1024 * 1024;
+        static INPUT: [u8; N] = [_F; N];
+        b.iter(|| {
+            let reader = Reader::new(INPUT.as_slice());
+            let _ = reader.collect::<Vec<Result<u8, InError>>>();
+        });
+    }
+
+    #[bench]
+    fn write(b: &mut test::Bencher) {
+        const N: usize = 1024 * 1024;
+        static mut OUTPUT: [u8; N] = [_0; N];
+        b.iter(|| unsafe {
+            let mut writer = Writer::new(OUTPUT.as_mut_slice());
+            for _ in 0..N / 2 {
+                writer.write(255u8).unwrap();
+            }
+        });
+    }
+}
