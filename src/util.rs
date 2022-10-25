@@ -1,7 +1,6 @@
 use crate::error::OutError;
 use std::io::Write;
 
-#[cfg(test)]
 pub mod literals {
     pub const _0: u8 = '0' as u8;
     pub const _1: u8 = '1' as u8;
