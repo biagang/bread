@@ -19,13 +19,12 @@
 bread is a cross-platform command-line tool useful for converting from and to a stream of:
 - raw bytes
 - ascii characters
-- binary, hexadecimal or any other numeric base representation
+- binary, hexadecimal or other numeric base representation of bytes
 
-See 
+For more info about supported formats see 
 ```
 bread --help
 ```
-for more info about supported formats.
 
 > **[?]**
 > Please provide your screenshots here.
@@ -53,9 +52,7 @@ binary will be in ```target/release/bread```
 
 ## Usage
 
-> **[?]**
-> How does one go about using it?
-> Provide various use cases and code examples here.
+<img src="docs/images/usage.gif" title="usage" width="100%">
 
 ## License
 
@@ -65,5 +62,6 @@ See [LICENSE](LICENSE) for more information.
 
 ## Acknowledgements
 
-1. [clap](https://github.com/clap-rs/clap)
-2. [amazing-github-template](https://github.com/dec0dOS/amazing-github-template)
+- [clap](https://github.com/clap-rs/clap)
+- [amazing-github-template](https://github.com/dec0dOS/amazing-github-template)
+- [terminalizer](https://github.com/faressoft/terminalizer)
