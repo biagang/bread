@@ -119,7 +119,7 @@ mod tests {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "benchmark"))]
 mod benchs {
     extern crate test;
     use super::*;

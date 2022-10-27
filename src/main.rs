@@ -1,4 +1,4 @@
-#![feature(test)]
+#![cfg_attr(feature = "benchmark", feature(test))]
 
 mod error;
 use error::*;
