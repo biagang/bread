@@ -21,7 +21,7 @@ bread --help
 ### Prerequisites
 
 bread is cross-platofrm, coded in Rust; you need to have a valid [Rust](https://rustup.rs/) installation.
-Nightly version would be required for running benchmarks.
+Nightly version would be required for running benchmarks (feature "benchmark").
 
 ### Build from sources
 
