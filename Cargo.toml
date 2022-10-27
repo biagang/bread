@@ -8,3 +8,6 @@ description = "byte conversion tool"
 
 [dependencies]
 clap = { version = "4.0.18", features = ["derive", "cargo"] }
+
+[features]
+benchmark = []
