@@ -1,10 +1,10 @@
 # bread
 
 > CLI byte stream conversion tool in various formats
+<img src="docs/images/usage.gif" title="usage" width="100%">
 
 ## About
 
-<img src="docs/images/usage.gif" title="usage" width="100%">
 
 bread is a cross-platform command-line tool useful for converting from and to a stream of:
 - raw bytes
