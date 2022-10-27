@@ -19,12 +19,12 @@ impl Base {
     fn valid(&self, n: char) -> Option<u8> {
         let digit = if n >= '0' && n <= '9' {
             n as u8 - '0' as u8
-        } else if n >= 'a' && n <= 'f' {
+        } else if n >= 'a' && n <= 'z' {
             10u8 + (n as u8 - 'a' as u8)
-        } else if n >= 'A' && n <= 'F' {
+        } else if n >= 'A' && n <= 'Z' {
             10u8 + (n as u8 - 'A' as u8)
         } else {
-            16u8
+            36u8
         };
         if digit < self.base {
             Some(digit)
@@ -157,8 +157,9 @@ impl<W: Write> ByteWriter for Writer<W> {
 mod tests {
     use super::*;
 
-    const DIGITS: [u8; 16] = [
-        _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _A, _B, _C, _D, _E, _F,
+    const DIGITS: [u8; 36] = [
+        _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M,
+        _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z,
     ];
 
     fn required_digits(base: u8) -> u8 {
@@ -167,21 +168,21 @@ mod tests {
             3 => 6,
             4..=6 => 4,
             7..=15 => 3,
-            16 => 2,
+            16..=36 => 2,
             _ => panic!("invalid base {base}"),
         }
     }
 
     #[test]
     fn base_digits_per_byte() {
-        for base in 2..17 {
+        for base in 2..37 {
             assert_eq!(Base::new(base).digits_per_byte, required_digits(base));
         }
     }
 
     #[test]
     fn base_valid_digits() {
-        for b in 2..17 {
+        for b in 2..37 {
             let base = Base::new(b);
             for value in 0..DIGITS.len() {
                 let digit = DIGITS[value];
@@ -191,18 +192,18 @@ mod tests {
                     if value < b as usize {
                         assert_eq!(Some(value as u8), result);
                     } else {
-                        assert_eq!(None, result);
+                        assert_eq!(None, result, "base {b}, value: {value}");
                     }
                 }
             }
-            assert_eq!(None, base.valid('p'));
-            assert_eq!(None, base.valid('G'));
+            assert_eq!(None, base.valid('*'));
+            assert_eq!(None, base.valid('!'));
         }
     }
 
     #[test]
     fn base_to_char() {
-        for b in 2..17 {
+        for b in 2..37 {
             let base = Base::new(b);
             for d in 0..b {
                 assert_eq!(Some(DIGITS[d as usize]), base.to_char(d));
@@ -240,6 +241,45 @@ mod tests {
         let mut output = [0u8; 3];
         let mut writer = Writer::new(output.as_mut_slice(), 8);
         writer.write(input).unwrap();
+        assert_eq!(expected, output);
+    }
+
+    #[test]
+    fn b36_read() {
+        let mut input = [_0; DIGITS.len() * 2];
+        for i in 0..input.len() {
+            if i % 2 == 1 {
+                input[i] = DIGITS[i / 2];
+            }
+        }
+        let mut reader = Reader::new(input.as_slice(), 36);
+        for i in 0u8..36u8 {
+            let got = reader.next();
+            if got.is_none() {
+                panic!("reader.next() returned None for {i}");
+            }
+            let got = got.unwrap();
+            if got.is_err() {
+                panic!("{got:?} returned for {i}");
+            }
+            assert_eq!(i, got.unwrap());
+        }
+        assert!(reader.next().is_none());
+    }
+
+    #[test]
+    fn b36_write() {
+        let mut input = [0u8; 36];
+        let mut expected = [_0; 72];
+        for i in 0..DIGITS.len() {
+            input[i] = i as u8;
+            expected[2 * i + 1] = DIGITS[i];
+        }
+        let mut output = [0u8; 72];
+        let mut writer = Writer::new(output.as_mut_slice(), 36);
+        for b in input {
+            writer.write(b).unwrap();
+        }
         assert_eq!(expected, output);
     }
 }

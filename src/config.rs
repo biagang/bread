@@ -31,7 +31,7 @@ enum Mode {
     Hex,
     /// ASCII characters (g.e. '!')
     Ascii,
-    /// numeric base (2 to 16)
+    /// numeric base (2 to 36)
     Base(u8),
 }
 
@@ -44,10 +44,10 @@ impl Mode {
 - N:     base N representation (note: make sure to provide required number of digits per each byte, pad with heading 0s) "#;
     fn parse(arg: &str) -> Result<Self, String> {
         if let Ok(base) = arg.parse::<u8>() {
-            if base > 1 && base < 17 {
+            if base > 1 && base < 37 {
                 Ok(Mode::Base(base))
             } else {
-                Err(format!("base must be in [2,16]"))
+                Err(format!("base must be in [2,36]"))
             }
         } else {
             match arg {
@@ -56,7 +56,7 @@ impl Mode {
                 "hex" | "h" => Ok(Mode::Hex),
                 "ascii" | "a" => Ok(Mode::Ascii),
                 _ => Err(format!(
-                    "allowed modes: raw, bin, hex, ascii or N where N is a numeric base in [2,16]"
+                    "allowed modes: raw, bin, hex, ascii or N where N is a numeric base in [2,36]"
                 )),
             }
         }
@@ -107,7 +107,7 @@ impl Config {
                 Mode::Ascii => Box::new(ascii::Writer::new(std::io::stdout())),
                 Mode::Base(b) => match b {
                     2 => Box::new(binary::Writer::new(std::io::stdout())),
-                    16 =>Box::new(hexadecimal::Writer::new(std::io::stdout())),
+                    16 => Box::new(hexadecimal::Writer::new(std::io::stdout())),
                     _ => Box::new(base::Writer::new(std::io::stdout(), b)),
                 },
             },
