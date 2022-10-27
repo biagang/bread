@@ -1,0 +1,294 @@
+# The configurations that used for the recording, feel free to edit them
+config:
+
+  # Specify a command to be executed
+  # like `/bin/bash -l`, `ls`, or any other commands
+  # the default is bash for Linux
+  # or powershell.exe for Windows
+  command: bash -l
+  
+  # Specify the current working directory path
+  # the default is the current working directory path
+  cwd: /bread
+  
+  # Export additional ENV variables
+  env:
+    recording: true
+  
+  # Explicitly set the number of columns
+  # or use `auto` to take the current
+  # number of columns of your shell
+  cols: 80
+  
+  # Explicitly set the number of rows
+  # or use `auto` to take the current
+  # number of rows of your shell
+  rows: 20
+  
+  # Amount of times to repeat GIF
+  # If value is -1, play once
+  # If value is 0, loop indefinitely
+  # If value is a positive number, loop n times
+  repeat: 0
+  
+  # Quality
+  # 1 - 100
+  quality: 100
+  
+  # Delay between frames in ms
+  # If the value is `auto` use the actual recording delays
+  frameDelay: auto
+  
+  # Maximum delay between frames in ms
+  # Ignored if the `frameDelay` isn't set to `auto`
+  # Set to `auto` to prevent limiting the max idle time
+  maxIdleTime: 2000
+  
+  # The surrounding frame box
+  # The `type` can be null, window, floating, or solid`
+  # To hide the title use the value null
+  # Don't forget to add a backgroundColor style with a null as type
+  frameBox:
+    type: null
+    title: null
+    style:
+      border: 0px black solid
+      # boxShadow: none
+      # margin: 0px
+  
+  # Add a watermark image to the rendered gif
+  # You need to specify an absolute path for
+  # the image on your machine or a URL, and you can also
+  # add your own CSS styles
+  watermark:
+    imagePath: null
+    style:
+      position: absolute
+      right: 15px
+      bottom: 15px
+      width: 100px
+      opacity: 0.9
+  
+  # Cursor style can be one of
+  # `block`, `underline`, or `bar`
+  cursorStyle: block
+  
+  # Font family
+  # You can use any font that is installed on your machine
+  # in CSS-like syntax
+  fontFamily: "Monaco, Lucida Console, Ubuntu Mono, Monospace"
+  
+  # The size of the font
+  fontSize: 18
+  
+  # The height of lines
+  lineHeight: 1
+  
+  # The spacing between letters
+  letterSpacing: 0
+  
+  # Theme
+  theme:
+    background: "#202322"
+    foreground: "#afafaf"
+    cursor: "#c7c7c7"
+    black: "#232628"
+    red: "#fc4384"
+    green: "#b3e33b"
+    yellow: "#ffa727"
+    blue: "#75dff2"
+    magenta: "#ae89fe"
+    cyan: "#708387"
+    white: "#d5d5d0"
+    brightBlack: "#626566"
+    brightRed: "#ff7fac"
+    brightGreen: "#c8ed71"
+    brightYellow: "#ebdf86"
+    brightBlue: "#75dff2"
+    brightMagenta: "#ae89fe"
+    brightCyan: "#b1c6ca"
+    brightWhite: "#f9f9f4"
+  
+# Records, feel free to edit them
+records:
+  # target/release/bread -o 2; echo
+  - delay: 436
+    content: "\e]0;you@ubuntu:~/bread\e\\\e]7;file://ubuntu/home/you/bread\e\\\e]0;you@ubuntu: ~/bread\a\e[01;32myou@ubuntu\e[00m:\e[01;34m~/bread\e[00m$ "
+  - delay: 1916
+    content: t
+  - delay: 80
+    content: a
+  - delay: 80
+    content: r
+  - delay: 80
+    content: g
+  - delay: 80
+    content: e
+  - delay: 80
+    content: t/
+  - delay: 80
+    content: r
+  - delay: 80
+    content: e
+  - delay: 80
+    content: lease/
+  - delay: 80
+    content: b
+  - delay: 80
+    content: r
+  - delay: 80
+    content: e
+  - delay: 80
+    content: a
+  - delay: 80
+    content: 'd '
+  - delay: 800
+    content: '-'
+  - delay: 224
+    content: o
+  - delay: 192
+    content: ' '
+  - delay: 207
+    content: '2'
+  - delay: 800
+    content: ;
+  - delay: 79
+    content: ' '
+  - delay: 80
+    content: e
+  - delay: 80
+    content: c
+  - delay: 80
+    content: h
+  - delay: 80
+    content: o
+  - delay: 80
+    content: "\r\n"
+  - delay: 720
+    content: h
+  - delay: 80
+    content: e
+  - delay: 191
+    content: l
+  - delay: 129
+    content: l
+  - delay: 191
+    content: o
+  - delay: 144
+    content: ' '
+  - delay: 241
+    content: t
+  - delay: 160
+    content: h
+  - delay: 64
+    content: e
+  - delay: 79
+    content: r
+  - delay: 97
+    content: e
+  - delay: 336
+    content: '!'
+  - delay: 336
+    content: '!'
+  - delay: 700
+    content: "\r\n0110100001100101011011000110110001101111001000000111010001101000011001010111001001100101001000010010000100001010\r\n\e]0;you@ubuntu:~/bread\e\\\e]7;file://ubuntu/home/you/bread\e\\\e]0;you@ubuntu: ~/bread\a\e[01;32myou@ubuntu\e[00m:\e[01;34m~/bread\e[00m$ "
+  - delay: 1500
+    content: e
+  - delay: 80
+    content: c
+  - delay: 80
+    content: h
+  - delay: 80
+    content: o
+  - delay: 80
+    content: ' '
+  - delay: 80
+    content: '-'
+  - delay: 80
+    content: 'n'
+  - delay: 80
+    content: ' '
+  - delay: 256
+    content: ''''
+  - delay: 256
+    content: a
+  - delay: 496
+    content: '4'
+  - delay: 464
+    content: f
+  - delay: 864
+    content: f
+  - delay: 256
+    content: ''''
+  - delay: 896
+    content: ' '
+  - delay: 228
+    content: '|'
+  - delay: 80
+    content: ' '
+  - delay: 80
+    content: t
+  - delay: 80
+    content: a
+  - delay: 80
+    content: r
+  - delay: 80
+    content: g
+  - delay: 80
+    content: e
+  - delay: 80
+    content: t
+  - delay: 80
+    content: /
+  - delay: 80
+    content: r
+  - delay: 80
+    content: e
+  - delay: 80
+    content: lease/
+  - delay: 80
+    content: b
+  - delay: 80
+    content: r
+  - delay: 80
+    content: e
+  - delay: 80
+    content: a
+  - delay: 80
+    content: 'd '
+  - delay: 80
+    content: '-'
+  - delay: 352
+    content: i
+  - delay: 128
+    content: ' '
+  - delay: 320
+    content: '1'
+  - delay: 160
+    content: '6'
+  - delay: 224
+    content: ' '
+  - delay: 368
+    content: '-'
+  - delay: 240
+    content: o
+  - delay: 160
+    content: ' '
+  - delay: 368
+    content: '8'
+  - delay: 364
+    content: ;
+  - delay: 96
+    content: ' '
+  - delay: 80
+    content: e
+  - delay: 80
+    content: c
+  - delay: 80
+    content: h
+  - delay: 80
+    content: o
+  - delay: 641
+    content: "\r\n244377\r\n\e]0;you@ubuntu:~/bread\e\\\e]7;file://ubuntu/home/you/bread\e\\\e]0;you@ubuntu: ~/bread\a\e[01;32myou@ubuntu\e[00m:\e[01;34m~/bread\e[00m$ "
+  - delay: 1900  
+    content: "\r\n"
