@@ -26,14 +26,6 @@ For more info about supported formats see
 bread --help
 ```
 
-> **[?]**
-> Please provide your screenshots here.
-
-|                               Home Page                               |                               Login Page                               |
-| :-------------------------------------------------------------------: | :--------------------------------------------------------------------: |
-| <img src="docs/images/screenshot.png" title="Home Page" width="100%"> | <img src="docs/images/screenshot.png" title="Login Page" width="100%"> |
-
-
 ## Getting Started
 
 ### Prerequisites
@@ -42,6 +34,7 @@ bread is cross-platofrm, coded in Rust; you need to have a valid [Rust](https://
 Nightly version would be required for running benchmarks.
 
 ### Build from sources
+
 1. clone this repository
 2. build with cargo:
 ```
