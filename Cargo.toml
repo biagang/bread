@@ -1,5 +1,5 @@
 [package]
-name = "bread"
+name = "bread-cli"
 version = "1.0.0"
 edition = "2021"
 description = "byte conversion tool"
