@@ -2,19 +2,9 @@
 
 > CLI byte stream conversion tool in various formats
 
-## Table of Contents
-
-- [About](#about)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Build from sources](#build-from-sources)
-- [Usage](#usage)
-- [License](#license)
-- [Acknowledgements](#acknowledgements)
-
----
-
 ## About
+
+<img src="docs/images/usage.gif" title="usage" width="100%">
 
 bread is a cross-platform command-line tool useful for converting from and to a stream of:
 - raw bytes
@@ -45,7 +35,27 @@ binary will be in ```target/release/bread```
 
 ## Usage
 
-<img src="docs/images/usage.gif" title="usage" width="100%">
+Usage: bread [OPTIONS]
+
+Options:
+  -i, --input INPUT
+  -o, --output OUTPUT
+
+   Possible values for INPUT and OUTPUT are:
+   - raw:   raw byte
+   - bin:   binary representation (g.e. '00001101')
+   - hex:   hexadecimal representation (g.e. 'a4')
+   - ascii: ASCII characters (g.e. '!')
+   - N:     base N representation (note: make sure to provide required number of digits per each byte, pad with heading 0s) 
+
+   [default: ascii]
+
+  -h, --help
+          Print help information (use `-h` for a summary)
+
+  -V, --version
+          Print version information
+
 
 ## License
 
