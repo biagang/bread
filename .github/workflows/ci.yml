@@ -13,11 +13,6 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-      - name: release build
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --release
       - name: test
         uses: actions-rs/cargo@v1
         with:
