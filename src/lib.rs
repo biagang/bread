@@ -14,6 +14,38 @@ pub mod raw;
 
 mod util;
 
+/// Converts byte input stream format to byte output stream format
+///
+/// Iterates on bytes in istream and [writes] them to ostream.
+///
+/// [writes]: crate::byte_writer::ByteWriter::write
+///
+/// # Errors
+///
+/// see [ErrorType] for error details.
+///
+/// [ErrorType]: crate::error::ErrorType
+///
+/// # Examples
+///
+/// binary to hexadecimal conversion
+/// ```
+/// use bread_cli::*;
+/// const _0: u8 = '0' as u8;
+/// const _1: u8 = '1' as u8;
+/// const _4: u8 = '4' as u8;
+/// const _5: u8 = '5' as u8;
+/// const _A: u8 = 'a' as u8;
+/// const _F: u8 = 'f' as u8;
+///
+/// let input = [ _0, _1, _0, _0, _1, _0, _1, _0, _0, _1, _0, _1, _1, _1, _1, _1, ];
+/// let mut output = [0u8; 4];
+/// let reader = Box::new(binary::Reader::new(input.as_slice()));
+/// let writer = Box::new(hexadecimal::Writer::new(output.as_mut_slice()));
+/// convert(reader, writer).unwrap();
+/// assert_eq!([_4, _A, _5, _F], output);
+/// ```
+///
 pub fn convert(
     istream: Box<dyn Iterator<Item = Result<u8, InError>> + '_>,
     mut ostream: Box<dyn ByteWriter + '_>,
@@ -85,12 +117,11 @@ mod tests {
         let input = [
             _0, _1, _0, _0, _1, _0, _1, _0, _0, _1, _0, _1, _1, _1, _1, _1,
         ];
-        let expected = [_4, _A, _5, _F];
         let mut output = [0u8; 4];
         let reader = Box::new(binary::Reader::new(input.as_slice()));
         let writer = Box::new(hexadecimal::Writer::new(output.as_mut_slice()));
         convert(reader, writer).unwrap();
-        assert_eq!(expected, output);
+        assert_eq!([_4, _A, _5, _F], output);
     }
 
     #[test]
