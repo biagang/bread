@@ -1,12 +1,13 @@
+use bread_cli as bread;
 use std::fmt::Display;
 
-use crate::ascii;
-use crate::base;
-use crate::binary;
-use crate::byte_writer::ByteWriter;
-use crate::error::*;
-use crate::hexadecimal;
-use crate::raw;
+use bread::ascii;
+use bread::base;
+use bread::binary;
+use bread::byte_writer::ByteWriter;
+use bread::error::*;
+use bread::hexadecimal;
+use bread::raw;
 use clap::Parser;
 
 #[derive(Debug, Parser)]
