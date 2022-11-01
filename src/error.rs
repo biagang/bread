@@ -25,8 +25,16 @@ pub enum ErrorType<Byte> {
 }
 
 /// Input error
+///
+/// See [ErrorType] for details
+///
+/// [ErrorType]: ErrorType
 pub type InError = ErrorType<char>;
 /// Output error
+///
+/// See [ErrorType] for details
+///
+/// [ErrorType]: ErrorType
 pub type OutError = ErrorType<u8>;
 
 /// The error type returned by [convert].

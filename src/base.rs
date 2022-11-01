@@ -45,6 +45,12 @@ impl Base {
     }
 }
 
+/// An iterator over Result<u8,[InError]>
+///
+/// Reads bytes from the input stream in the expected numeric base format, that means allowed
+/// characters depend on the particular numeric base (in any case in the ranges ('0', '9'), ('a', 'z') or ('A', 'Z'); any whitespace character is allowed and skipped)
+///
+/// [InError]: crate::error::InError
 pub struct Reader<R: Read> {
     in_bytes: Bytes<R>,
     base: Base,
@@ -116,6 +122,9 @@ impl<R: Read> Iterator for Reader<R> {
     }
 }
 
+/// Writes bytes to the output stream in the provided numeric base format
+///
+/// Produced characters depend on the particular numeric base, in any case in the range ('0', '9') and ('a','z')
 pub struct Writer<W: Write> {
     out_bytes: W,
     base: Base,
