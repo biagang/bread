@@ -19,12 +19,12 @@ impl<R: Read> Reader<R> {
         }
     }
     fn valid(n: char) -> Option<u8> {
-        if n >= '0' && n <= '9' {
-            Some(n as u8 - '0' as u8)
-        } else if n >= 'a' && n <= 'f' {
-            Some(10u8 + (n as u8 - 'a' as u8))
-        } else if n >= 'A' && n <= 'F' {
-            Some(10u8 + (n as u8 - 'A' as u8))
+        if ('0'..='9').contains(&n) {
+            Some(n as u8 - b'0')
+        } else if ('a'..='f').contains(&n) {
+            Some(10u8 + (n as u8 - b'a'))
+        } else if ('A'..='F').contains(&n) {
+            Some(10u8 + (n as u8 - b'A'))
         } else {
             None
         }

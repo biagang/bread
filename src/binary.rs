@@ -46,7 +46,7 @@ impl<R: Read> Iterator for Reader<R> {
                         match in_byte {
                             '0' => {}
                             '1' => {
-                                value = value | (1 << i);
+                                value |= 1 << i;
                             }
                             _ => {
                                 if in_byte.is_ascii_whitespace() {
@@ -62,7 +62,7 @@ impl<R: Read> Iterator for Reader<R> {
                     }
                 },
             }
-            i = i - 1;
+            i -= 1;
         }
         Some(Ok(value))
     }

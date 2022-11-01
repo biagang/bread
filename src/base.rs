@@ -17,12 +17,12 @@ impl Base {
         }
     }
     fn valid(&self, n: char) -> Option<u8> {
-        let digit = if n >= '0' && n <= '9' {
-            n as u8 - '0' as u8
-        } else if n >= 'a' && n <= 'z' {
-            10u8 + (n as u8 - 'a' as u8)
-        } else if n >= 'A' && n <= 'Z' {
-            10u8 + (n as u8 - 'A' as u8)
+        let digit = if ('0'..='9').contains(&n) {
+            n as u8 - b'0'
+        } else if ('a'..='z').contains(&n) {
+            10u8 + (n as u8 - b'a')
+        } else if ('A'..='Z').contains(&n) {
+            10u8 + (n as u8 - b'A')
         } else {
             36u8
         };
@@ -106,7 +106,7 @@ impl<R: Read> Iterator for Reader<R> {
                     Ok(in_byte) => {
                         let in_char = in_byte as char;
                         if let Some(digit) = self.base.valid(in_char) {
-                            value = value + (digit * self.base.base.pow(i as u32));
+                            value += digit * self.base.base.pow(i as u32);
                         } else {
                             return Some(Err(InError::InvalidByte(in_char)));
                         }
@@ -116,7 +116,7 @@ impl<R: Read> Iterator for Reader<R> {
                     }
                 },
             }
-            i = i - 1;
+            i -= 1;
         }
         Some(Ok(value))
     }
@@ -146,10 +146,10 @@ impl<W: Write> ByteWriter for Writer<W> {
         let mut i = string.len() - 1;
         loop {
             let digit = byte % self.base.base;
-            byte = byte / self.base.base;
+            byte /= self.base.base;
             string[i] = self.base.to_char(digit).unwrap();
             if byte != 0 {
-                i = i - 1;
+                i -= 1;
             } else {
                 break;
             }

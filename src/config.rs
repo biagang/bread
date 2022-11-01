@@ -48,7 +48,7 @@ impl Mode {
             if base > 1 && base < 37 {
                 Ok(Mode::Base(base))
             } else {
-                Err(format!("base must be in [2,36]"))
+                Err("base must be in [2,36]".to_string())
             }
         } else {
             match arg {
@@ -56,9 +56,10 @@ impl Mode {
                 "bin" | "b" => Ok(Mode::Bin),
                 "hex" | "h" => Ok(Mode::Hex),
                 "ascii" | "a" => Ok(Mode::Ascii),
-                _ => Err(format!(
+                _ => Err(
                     "allowed modes: raw, bin, hex, ascii or N where N is a numeric base in [2,36]"
-                )),
+                        .to_string(),
+                ),
             }
         }
     }
@@ -79,6 +80,11 @@ impl Display for Mode {
         )
     }
 }
+
+pub type IO = (
+    Box<dyn Iterator<Item = Result<u8, InError>>>,
+    Box<dyn ByteWriter>,
+);
 
 pub struct Config {
     reader: Box<dyn Iterator<Item = Result<u8, InError>>>,
@@ -115,12 +121,9 @@ impl Config {
         })
     }
 
-    pub fn to_io(
+    pub fn into_io(
         self,
-    ) -> (
-        Box<dyn Iterator<Item = Result<u8, InError>>>,
-        Box<dyn ByteWriter>,
-    ) {
+    ) -> IO {
         (self.reader, self.writer)
     }
 }
