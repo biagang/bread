@@ -81,15 +81,15 @@ impl Display for Mode {
     }
 }
 
-pub type IO = (
-    Box<dyn Iterator<Item = Result<u8, InError>>>,
-    Box<dyn ByteWriter>,
-);
-
 pub struct Config {
     reader: Box<dyn Iterator<Item = Result<u8, InError>>>,
     writer: Box<dyn ByteWriter>,
 }
+
+pub type IO = (
+    Box<dyn Iterator<Item = Result<u8, InError>>>,
+    Box<dyn ByteWriter>,
+);
 
 impl Config {
     pub fn new() -> Option<Self> {
@@ -120,10 +120,10 @@ impl Config {
             },
         })
     }
+}
 
-    pub fn into_io(
-        self,
-    ) -> IO {
-        (self.reader, self.writer)
+impl From<Config> for IO {
+    fn from(config: Config) -> Self {
+        (config.reader, config.writer)
     }
 }
