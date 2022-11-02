@@ -1,12 +1,13 @@
+use bread_cli as bread;
 use std::fmt::Display;
 
-use crate::ascii;
-use crate::base;
-use crate::binary;
-use crate::byte_writer::ByteWriter;
-use crate::error::*;
-use crate::hexadecimal;
-use crate::raw;
+use bread::ascii;
+use bread::base;
+use bread::binary;
+use bread::byte_writer::ByteWriter;
+use bread::error::*;
+use bread::hexadecimal;
+use bread::raw;
 use clap::Parser;
 
 #[derive(Debug, Parser)]
@@ -47,7 +48,7 @@ impl Mode {
             if base > 1 && base < 37 {
                 Ok(Mode::Base(base))
             } else {
-                Err(format!("base must be in [2,36]"))
+                Err("base must be in [2,36]".to_string())
             }
         } else {
             match arg {
@@ -55,9 +56,10 @@ impl Mode {
                 "bin" | "b" => Ok(Mode::Bin),
                 "hex" | "h" => Ok(Mode::Hex),
                 "ascii" | "a" => Ok(Mode::Ascii),
-                _ => Err(format!(
+                _ => Err(
                     "allowed modes: raw, bin, hex, ascii or N where N is a numeric base in [2,36]"
-                )),
+                        .to_string(),
+                ),
             }
         }
     }
@@ -83,6 +85,11 @@ pub struct Config {
     reader: Box<dyn Iterator<Item = Result<u8, InError>>>,
     writer: Box<dyn ByteWriter>,
 }
+
+pub type IO = (
+    Box<dyn Iterator<Item = Result<u8, InError>>>,
+    Box<dyn ByteWriter>,
+);
 
 impl Config {
     pub fn new() -> Option<Self> {
@@ -113,13 +120,10 @@ impl Config {
             },
         })
     }
+}
 
-    pub fn to_io(
-        self,
-    ) -> (
-        Box<dyn Iterator<Item = Result<u8, InError>>>,
-        Box<dyn ByteWriter>,
-    ) {
-        (self.reader, self.writer)
+impl From<Config> for IO {
+    fn from(config: Config) -> Self {
+        (config.reader, config.writer)
     }
 }

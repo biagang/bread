@@ -3,6 +3,12 @@ use crate::error::{InError, OutError};
 use crate::util;
 use std::io::{Bytes, Read, Write};
 
+/// An iterator over Result<u8,[InError]>
+///
+/// Reads bytes from the input stream as ASCII characters, so only values in the range (0, 127) are
+/// allowed
+///
+/// [InError]: crate::error::InError
 pub struct Reader<R: Read> {
     in_bytes: Bytes<R>,
 }
@@ -31,6 +37,10 @@ impl<R: Read> Iterator for Reader<R> {
     }
 }
 
+/// Writes ASCII characters to the output stream
+///
+/// Produced characters are valid ASCII;
+/// byte values provided for writing must be in the range (0,127)
 pub struct Writer<W: Write> {
     out_bytes: W,
 }

@@ -3,6 +3,11 @@ use crate::error::{InError, OutError};
 use crate::util;
 use std::io::{Bytes, Read, Write};
 
+/// An iterator over Result<u8,[InError]>
+///
+/// Reads bytes from the input stream in hexadecimal base format, that is a multiple of 2 characters in the ranges ('0','9'), ('a','f') or ('A', 'F') are allowed (and any number of whitespace characters that will be skipped)
+///
+/// [InError]: crate::error::InError
 pub struct Reader<R: Read> {
     in_bytes: Bytes<R>,
 }
@@ -14,12 +19,12 @@ impl<R: Read> Reader<R> {
         }
     }
     fn valid(n: char) -> Option<u8> {
-        if n >= '0' && n <= '9' {
-            Some(n as u8 - '0' as u8)
-        } else if n >= 'a' && n <= 'f' {
-            Some(10u8 + (n as u8 - 'a' as u8))
-        } else if n >= 'A' && n <= 'F' {
-            Some(10u8 + (n as u8 - 'A' as u8))
+        if ('0'..='9').contains(&n) {
+            Some(n as u8 - b'0')
+        } else if ('a'..='f').contains(&n) {
+            Some(10u8 + (n as u8 - b'a'))
+        } else if ('A'..='F').contains(&n) {
+            Some(10u8 + (n as u8 - b'A'))
         } else {
             None
         }
@@ -76,6 +81,9 @@ impl<R: Read> Iterator for Reader<R> {
     }
 }
 
+/// Writes bytes to the output stream in the hexadecimal format
+///
+/// Produced characters are in the ranges ('0', '9') and ('a', 'f')
 pub struct Writer<W: Write> {
     out_bytes: W,
 }

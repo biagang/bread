@@ -4,6 +4,12 @@ use crate::util;
 use crate::util::literals::*;
 use std::io::{Bytes, Read, Write};
 
+/// An iterator over Result<u8,[InError]>
+///
+/// Reads bytes from the input stream in binary base format, that is a multiple of 8 characters 0 and 1 are
+/// allowed (and any number of whitespace characters that will be skipped)
+///
+/// [InError]: crate::error::InError
 pub struct Reader<R: Read> {
     in_bytes: Bytes<R>,
 }
@@ -40,7 +46,7 @@ impl<R: Read> Iterator for Reader<R> {
                         match in_byte {
                             '0' => {}
                             '1' => {
-                                value = value | (1 << i);
+                                value |= 1 << i;
                             }
                             _ => {
                                 if in_byte.is_ascii_whitespace() {
@@ -56,12 +62,15 @@ impl<R: Read> Iterator for Reader<R> {
                     }
                 },
             }
-            i = i - 1;
+            i -= 1;
         }
         Some(Ok(value))
     }
 }
 
+/// Writes bytes to the output stream in the binary format
+///
+/// Produced characters are '0' and '1'.
 pub struct Writer<W: Write> {
     out_bytes: W,
 }

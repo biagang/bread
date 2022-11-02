@@ -3,6 +3,11 @@ use crate::error::{InError, OutError};
 use crate::util;
 use std::io::{Bytes, Read, Write};
 
+/// An iterator over Result<u8,[InError]>
+///
+/// Reads raw bytes from the input stream
+///
+/// [InError]: crate::error::InError
 pub struct Reader<R: Read> {
     in_bytes: Bytes<R>,
 }
@@ -25,6 +30,7 @@ impl<R: Read> Iterator for Reader<R> {
     }
 }
 
+/// Writes raw bytes to the output stream
 pub struct Writer<W: Write> {
     out_bytes: W,
 }
