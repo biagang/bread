@@ -1,6 +1,6 @@
 # bread
 
-> CLI byte stream conversion tool in various formats
+> byte stream conversion library and CLI tool
 <img src="docs/images/usage.gif" title="usage" width="100%">
 
 ## About
@@ -13,7 +13,7 @@ bread is a cross-platform command-line tool useful for converting from and to a 
 
 For more info about supported formats see 
 ```
-bread --help
+bread-cli --help
 ```
 
 ## Getting Started
@@ -23,6 +23,12 @@ bread --help
 bread is cross-platofrm, coded in Rust; you need to have a valid [Rust](https://rustup.rs/) installation.
 Nightly version would be required for running benchmarks (feature "benchmark").
 
+### Get with cargo
+
+```
+cargo install -f bread-cli
+```
+
 ### Build from sources
 
 1. clone this repository
@@ -30,8 +36,6 @@ Nightly version would be required for running benchmarks (feature "benchmark").
 ```
 cargo build --release
 ```
-binary will be in ```target/release/bread```
-
 
 ## Usage
 
