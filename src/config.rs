@@ -20,6 +20,10 @@ struct Args {
     #[arg(short, long, value_parser = Mode::parse, default_value_t = Mode::Ascii, long_help = Mode::LONG_HELP)]
     /// output format
     output: Mode,
+
+    #[arg(short = 'e', long = "item-separator", default_value = "")]
+    /// separator string for items within a line
+    item_separator: String,
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
@@ -34,6 +38,14 @@ enum Mode {
     Ascii,
     /// numeric base (2 to 36)
     Base(u8),
+}
+
+impl From<&Args> for bread::Format {
+    fn from(args: &Args) -> Self {
+        Self {
+            item_separator: args.item_separator.clone(),
+        }
+    }
 }
 
 impl Mode {
@@ -84,6 +96,7 @@ impl Display for Mode {
 pub struct Config {
     reader: Box<dyn Iterator<Item = Result<u8, InError>>>,
     writer: Box<dyn ByteWriter>,
+    out_fmt: bread::Format,
 }
 
 pub type IO = (
@@ -96,6 +109,7 @@ impl Config {
         let args = Args::parse();
 
         Some(Config {
+            out_fmt: (&args).into(),
             reader: match args.input {
                 Mode::Raw => Box::new(raw::Reader::new(std::io::stdin())),
                 Mode::Bin => Box::new(binary::Reader::new(std::io::stdin())),
@@ -119,6 +133,16 @@ impl Config {
                 },
             },
         })
+    }
+    fn is_out_fmt_set(fmt: &bread::Format) -> bool {
+        fmt.item_separator.is_empty() == false
+    }
+    pub fn out_format(&self) -> Option<bread::Format> {
+        if Self::is_out_fmt_set(&self.out_fmt) {
+            Some(self.out_fmt.clone())
+        } else {
+            None
+        }
     }
 }
 
