@@ -91,7 +91,7 @@ mod tests {
         ];
         let mut output = [0u8; 16];
         let reader = Box::new(binary::Reader::new(input.as_slice()));
-        let writer = Box::new(binary::Writer::new(output.as_mut_slice()));
+        let writer = Box::new(binary::Writer::new(output.as_mut_slice(), None));
         convert(reader, writer, None).unwrap();
         assert_eq!(input, output);
     }

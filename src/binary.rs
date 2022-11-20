@@ -1,7 +1,7 @@
 use crate::byte_writer::ByteWriter;
 use crate::error::{InError, OutError};
-use crate::util;
 use crate::util::literals::*;
+use crate::{util, Format};
 use std::io::{Bytes, Read, Write};
 
 /// An iterator over Result<u8,[InError]>
@@ -73,11 +73,12 @@ impl<R: Read> Iterator for Reader<R> {
 /// Produced characters are '0' and '1'.
 pub struct Writer<W: Write> {
     out_bytes: W,
+    fmt: Option<Format>,
 }
 
 impl<W: Write> Writer<W> {
-    pub fn new(out_bytes: W) -> Self {
-        Writer { out_bytes }
+    pub fn new(out_bytes: W, fmt: Option<Format>) -> Self {
+        Writer { out_bytes, fmt }
     }
 }
 
@@ -113,9 +114,23 @@ mod tests {
         let input = 0b10110100u8;
         let expected = [_1, _0, _1, _1, _0, _1, _0, _0];
         let mut output = [0u8; 8];
-        let mut writer = Writer::new(output.as_mut_slice());
+        let mut writer = Writer::new(output.as_mut_slice(), None);
         writer.write(input).unwrap();
         assert_eq!(expected, output);
+    }
+
+    #[test]
+    fn write_fmt() {
+        let input = 0b10110100u8;
+        let expected = [_1, _0, _1, _1, _0, _1, _0, _0];
+        let mut output = [0u8; 8];
+        let item_separator = "-";
+        let mut writer = Writer::new(
+            output.as_mut_slice(),
+            Some(Format {
+                item_separator: item_separator.to_string(),
+            }),
+        );
     }
 }
 

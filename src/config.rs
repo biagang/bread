@@ -123,11 +123,11 @@ impl Config {
             },
             writer: match args.output {
                 Mode::Raw => Box::new(raw::Writer::new(std::io::stdout())),
-                Mode::Bin => Box::new(binary::Writer::new(std::io::stdout())),
+                Mode::Bin => Box::new(binary::Writer::new(std::io::stdout(), None)),
                 Mode::Hex => Box::new(hexadecimal::Writer::new(std::io::stdout())),
                 Mode::Ascii => Box::new(ascii::Writer::new(std::io::stdout())),
                 Mode::Base(b) => match b {
-                    2 => Box::new(binary::Writer::new(std::io::stdout())),
+                    2 => Box::new(binary::Writer::new(std::io::stdout(), None)),
                     16 => Box::new(hexadecimal::Writer::new(std::io::stdout())),
                     _ => Box::new(base::Writer::new(std::io::stdout(), b)),
                 },
