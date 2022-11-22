@@ -1,6 +1,6 @@
 [package]
 name = "bread-cli"
-version = "1.1.0"
+version = "2.0.0"
 edition = "2021"
 description = "byte conversion tool"
 license = "GPL-3.0-or-later"

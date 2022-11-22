@@ -40,16 +40,17 @@ mod util;
 ///
 /// let input = [ _0, _1, _0, _0, _1, _0, _1, _0, _0, _1, _0, _1, _1, _1, _1, _1, ];
 /// let mut output = [0u8; 4];
-/// let reader = Box::new(binary::Reader::new(input.as_slice()));
-/// let writer = Box::new(hexadecimal::Writer::new(output.as_mut_slice()));
-/// convert(reader, writer).unwrap();
+/// let mut reader = binary::Reader::new(input.as_slice());
+/// let mut writer = hexadecimal::Writer::new(output.as_mut_slice());
+/// convert(&mut reader, &mut writer).unwrap();
 /// assert_eq!([_4, _A, _5, _F], output);
 /// ```
 ///
-pub fn convert(
-    istream: Box<dyn Iterator<Item = Result<u8, InError>> + '_>,
-    mut ostream: Box<dyn ByteWriter + '_>,
-) -> Result<(), Error> {
+pub fn convert<I, O>(istream: &mut I, ostream: &mut O) -> Result<(), Error>
+where
+    I: Iterator<Item = Result<u8, InError>> + ?Sized,
+    O: ByteWriter + ?Sized,
+{
     for input in istream {
         match input {
             Ok(input) => {
@@ -76,9 +77,9 @@ mod tests {
             _0, _1, _0, _0, _1, _0, _1, _0, _0, _1, _0, _1, _1, _1, _1, _1,
         ];
         let mut output = [0u8; 16];
-        let reader = Box::new(binary::Reader::new(input.as_slice()));
-        let writer = Box::new(binary::Writer::new(output.as_mut_slice()));
-        convert(reader, writer).unwrap();
+        let mut reader = binary::Reader::new(input.as_slice());
+        let mut writer = binary::Writer::new(output.as_mut_slice());
+        convert(&mut reader, &mut writer).unwrap();
         assert_eq!(input, output);
     }
 
@@ -86,9 +87,9 @@ mod tests {
     fn hex2hex() {
         let input = [_A, _7, _B.to_ascii_uppercase(), _3];
         let mut output = [0u8; 4];
-        let reader = Box::new(hexadecimal::Reader::new(input.as_slice()));
-        let writer = Box::new(hexadecimal::Writer::new(output.as_mut_slice()));
-        convert(reader, writer).unwrap();
+        let mut reader = hexadecimal::Reader::new(input.as_slice());
+        let mut writer = hexadecimal::Writer::new(output.as_mut_slice());
+        convert(&mut reader, &mut writer).unwrap();
         assert_eq!(input.to_ascii_lowercase(), output);
     }
 
@@ -96,9 +97,9 @@ mod tests {
     fn ascii2ascii() {
         let input = [_A, _B, _STAR, _EXCL];
         let mut output = [0u8; 4];
-        let reader = Box::new(ascii::Reader::new(input.as_slice()));
-        let writer = Box::new(ascii::Writer::new(output.as_mut_slice()));
-        convert(reader, writer).unwrap();
+        let mut reader = ascii::Reader::new(input.as_slice());
+        let mut writer = ascii::Writer::new(output.as_mut_slice());
+        convert(&mut reader, &mut writer).unwrap();
         assert_eq!(input, output);
     }
 
@@ -106,9 +107,9 @@ mod tests {
     fn raw2raw() {
         let input = [10u8, 128u8, 255u8, 4u8];
         let mut output = [0u8; 4];
-        let reader = Box::new(raw::Reader::new(input.as_slice()));
-        let writer = Box::new(raw::Writer::new(output.as_mut_slice()));
-        convert(reader, writer).unwrap();
+        let mut reader = raw::Reader::new(input.as_slice());
+        let mut writer = raw::Writer::new(output.as_mut_slice());
+        convert(&mut reader, &mut writer).unwrap();
         assert_eq!(input, output);
     }
 
@@ -118,9 +119,9 @@ mod tests {
             _0, _1, _0, _0, _1, _0, _1, _0, _0, _1, _0, _1, _1, _1, _1, _1,
         ];
         let mut output = [0u8; 4];
-        let reader = Box::new(binary::Reader::new(input.as_slice()));
-        let writer = Box::new(hexadecimal::Writer::new(output.as_mut_slice()));
-        convert(reader, writer).unwrap();
+        let mut reader = binary::Reader::new(input.as_slice());
+        let mut writer = hexadecimal::Writer::new(output.as_mut_slice());
+        convert(&mut reader, &mut writer).unwrap();
         assert_eq!([_4, _A, _5, _F], output);
     }
 
@@ -131,9 +132,9 @@ mod tests {
         ];
         let expected = [_STAR, _EXCL];
         let mut output = [0u8; 2];
-        let reader = Box::new(binary::Reader::new(input.as_slice()));
-        let writer = Box::new(ascii::Writer::new(output.as_mut_slice()));
-        convert(reader, writer).unwrap();
+        let mut reader = binary::Reader::new(input.as_slice());
+        let mut writer = ascii::Writer::new(output.as_mut_slice());
+        convert(&mut reader, &mut writer).unwrap();
         assert_eq!(expected, output);
     }
 
@@ -142,9 +143,9 @@ mod tests {
         let input = [_A, _B, _STAR, _EXCL];
         let expected = [_6, _1, _6, _2, _2, _A, _2, _1];
         let mut output = [0u8; 8];
-        let reader = Box::new(ascii::Reader::new(input.as_slice()));
-        let writer = Box::new(hexadecimal::Writer::new(output.as_mut_slice()));
-        convert(reader, writer).unwrap();
+        let mut reader = ascii::Reader::new(input.as_slice());
+        let mut writer = hexadecimal::Writer::new(output.as_mut_slice());
+        convert(&mut reader, &mut writer).unwrap();
         assert_eq!(expected, output);
     }
 
@@ -153,9 +154,9 @@ mod tests {
         let input = [0xfa, 0x4b];
         let expected = [_F, _A, _4, _B];
         let mut output = [0u8; 4];
-        let reader = Box::new(raw::Reader::new(input.as_slice()));
-        let writer = Box::new(hexadecimal::Writer::new(output.as_mut_slice()));
-        convert(reader, writer).unwrap();
+        let mut reader = raw::Reader::new(input.as_slice());
+        let mut writer = hexadecimal::Writer::new(output.as_mut_slice());
+        convert(&mut reader, &mut writer).unwrap();
         assert_eq!(expected, output);
     }
 
@@ -163,9 +164,9 @@ mod tests {
     fn ascii2raw() {
         let input = [_0, _A, _2, _EXCL, _STAR];
         let mut output = [0u8; 5];
-        let reader = Box::new(ascii::Reader::new(input.as_slice()));
-        let writer = Box::new(raw::Writer::new(output.as_mut_slice()));
-        convert(reader, writer).unwrap();
+        let mut reader = ascii::Reader::new(input.as_slice());
+        let mut writer = raw::Writer::new(output.as_mut_slice());
+        convert(&mut reader, &mut writer).unwrap();
         assert_eq!(input, output);
     }
 
@@ -173,9 +174,9 @@ mod tests {
     fn b16_hex() {
         let input = [_1, _F];
         let mut output = [0u8; 2];
-        let reader = Box::new(base::Reader::new(input.as_slice(), 16));
-        let writer = Box::new(hexadecimal::Writer::new(output.as_mut_slice()));
-        convert(reader, writer).unwrap();
+        let mut reader = base::Reader::new(input.as_slice(), 16);
+        let mut writer = hexadecimal::Writer::new(output.as_mut_slice());
+        convert(&mut reader, &mut writer).unwrap();
         assert_eq!(input, output);
     }
 
@@ -184,9 +185,9 @@ mod tests {
         let input = [_0, _1, _2];
         let mut output = [0u8; 2];
         let expected = [_0, _C];
-        let reader = Box::new(base::Reader::new(input.as_slice(), 10));
-        let writer = Box::new(hexadecimal::Writer::new(output.as_mut_slice()));
-        convert(reader, writer).unwrap();
+        let mut reader = base::Reader::new(input.as_slice(), 10);
+        let mut writer = hexadecimal::Writer::new(output.as_mut_slice());
+        convert(&mut reader, &mut writer).unwrap();
         assert_eq!(expected, output);
     }
 
@@ -195,9 +196,41 @@ mod tests {
         let input = [_0, _1, _6, _2, _5, _4];
         let mut output = [0u8; 4];
         let expected = [_1, _0, _F, _E];
-        let reader = Box::new(base::Reader::new(input.as_slice(), 10));
-        let writer = Box::new(base::Writer::new(output.as_mut_slice(), 16));
-        convert(reader, writer).unwrap();
+        let mut reader = base::Reader::new(input.as_slice(), 10);
+        let mut writer = base::Writer::new(output.as_mut_slice(), 16);
+        convert(&mut reader, &mut writer).unwrap();
         assert_eq!(expected, output);
+    }
+}
+
+#[cfg(all(test, feature = "benchmark"))]
+mod dispatch {
+    extern crate test;
+    use super::*;
+
+    #[bench]
+    fn static_dispatch(b: &mut test::Bencher) {
+        const N: usize = 1024 * 1024;
+        static INPUT: [u8; N] = [b'0'; N];
+        b.iter(|| {
+            let mut output = [0u8; N];
+            let mut reader = binary::Reader::new(INPUT.as_slice());
+            let mut writer = binary::Writer::new(output.as_mut_slice());
+            convert(&mut reader, &mut writer).unwrap();
+            assert_eq!([b'0'; N], output);
+        });
+    }
+
+    #[bench]
+    fn dynamic_dyspatch(b: &mut test::Bencher) {
+        const N: usize = 1024 * 1024;
+        static INPUT: [u8; N] = [b'0'; N];
+        b.iter(|| {
+            let mut output = [0u8; N];
+            let mut reader = Box::new(binary::Reader::new(INPUT.as_slice()));
+            let mut writer = Box::new(binary::Writer::new(output.as_mut_slice()));
+            convert(reader.as_mut(), writer.as_mut()).unwrap();
+            assert_eq!([b'0'; N], output);
+        });
     }
 }
